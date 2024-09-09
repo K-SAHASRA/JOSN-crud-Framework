@@ -14,7 +14,7 @@ const Read = () => {
         setSchema(schemaData);
 
         // Fetch items
-        const itemsResponse = await fetch("http://localhost:5000/api/userCollection"); // Replace with your actual collection name
+        const itemsResponse = await fetch("http://localhost:5000/api/items");
         const itemsData = await itemsResponse.json();
         setItems(itemsData);
       } catch (error) {
@@ -40,7 +40,11 @@ const Read = () => {
           {items.map((item, index) => (
             <tr key={index}>
               {Object.keys(schema).map((field) => (
-                <td key={field}>{Array.isArray(item[field]) ? item[field].join(", ") : item[field]}</td>
+                <td key={field}>
+                  {Array.isArray(item[field])
+                    ? item[field].join(", ")
+                    : item[field]}
+                </td>
               ))}
             </tr>
           ))}

@@ -29,7 +29,7 @@ app.get('/api/schema', (req, res) => {
 
 app.get('/api/items', async (req, res) => {
     try {
-        const items = await userCollection.find(); // Use the dynamically defined model
+        const items = await userCRUD.find(); // Use the dynamically defined model
         res.json(items);
     } catch (error) {
         res.status(500).send('Server error');
@@ -37,8 +37,8 @@ app.get('/api/items', async (req, res) => {
 });
 
 
-// Define the schema for userCollection
-const userCollectionSchema = new mongoose.Schema({
+// Define the schema for userCRUD
+const userCRUDSchema = new mongoose.Schema({
   "id": "Number",
   "name": "String",
   "course": "String",
@@ -48,13 +48,13 @@ const userCollectionSchema = new mongoose.Schema({
   "age": "String",
   "department": "String"
 });
-const userCollection = mongoose.model('userCollection', userCollectionSchema);
+const userCRUD = mongoose.model('userCRUD', userCRUDSchema);
 
 // CRUD operations
 // Create
-app.post('/api/userCollection', async (req, res) => {
+app.post('/api/userCRUD', async (req, res) => {
     try {
-        const newItem = new userCollection(req.body);
+        const newItem = new userCRUD(req.body);
         await newItem.save();
         res.status(201).send(newItem);
     } catch (error) {
@@ -63,9 +63,9 @@ app.post('/api/userCollection', async (req, res) => {
 });
 
 // Read all
-app.get('/api/userCollection', async (req, res) => {
+app.get('/api/userCRUD', async (req, res) => {
     try {
-        const items = await userCollection.find();
+        const items = await userCRUD.find();
         res.status(200).send(items);
     } catch (error) {
         res.status(400).send(error);
@@ -73,9 +73,9 @@ app.get('/api/userCollection', async (req, res) => {
 });
 
 // Read one
-app.get('/api/userCollection/:id', async (req, res) => {
+app.get('/api/userCRUD/:id', async (req, res) => {
     try {
-        const item = await userCollection.findById(req.params.id);
+        const item = await userCRUD.findById(req.params.id);
         if (!item) {
             return res.status(404).send('Item not found');
         }
@@ -86,9 +86,9 @@ app.get('/api/userCollection/:id', async (req, res) => {
 });
 
 // Update
-app.put('/api/userCollection/:id', async (req, res) => {
+app.put('/api/userCRUD/:id', async (req, res) => {
     try {
-        const item = await userCollection.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const item = await userCRUD.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!item) {
             return res.status(404).send('Item not found');
         }
@@ -99,9 +99,9 @@ app.put('/api/userCollection/:id', async (req, res) => {
 });
 
 // Delete
-app.delete('/api/userCollection/:id', async (req, res) => {
+app.delete('/api/userCRUD/:id', async (req, res) => {
     try {
-        const item = await userCollection.findByIdAndDelete(req.params.id);
+        const item = await userCRUD.findByIdAndDelete(req.params.id);
         if (!item) {
             return res.status(404).send('Item not found');
         }

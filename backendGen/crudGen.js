@@ -2,6 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const template = require("./crudTemplate"); // Corrected filename
 
+// TODO : reading schema causes error
+
 // Function to read schema from a JSON file
 const readSchemaFromFile = (filePath) => {
   return new Promise((resolve, reject) => {
@@ -23,7 +25,7 @@ const readSchemaFromFile = (filePath) => {
 // Function to generate CRUD code
 const generateCRUD = (collectionName, schema) => {
   // Create the folder named after collectionName
-  const collectionDir = path.join(__dirname, collectionName);
+  const collectionDir = path.join(__dirname, "..", collectionName);
 
   if (!fs.existsSync(collectionDir)) {
     fs.mkdirSync(collectionDir, { recursive: true });
@@ -38,8 +40,17 @@ const generateCRUD = (collectionName, schema) => {
     if (err) {
       console.error("Error writing file:", err);
     } else {
-      console.log(`CRUD operations for collection '${collectionName}' generated successfully.`);
-      console.log(`Run 'node ${path.join(collectionName, `${collectionName}.js`)}' to start the server.`);
+      console.log(
+        `CRUD operations for collection '${collectionName}' generated successfully.`
+      );
+      console.log(
+        `Run 'node ${path.join(
+          __dirname,
+          "..",
+          collectionName,
+          `${collectionName}.js`
+        )}' to start the server.`
+      );
     }
   });
 };
@@ -53,6 +64,11 @@ const main = async () => {
 
   const collectionName = process.argv[2];
   const schemaFilePath = path.join(__dirname, "schema.json"); // Always use 'schema.json'
+
+  const envPath = path.join(__dirname, "..", "crud-app", ".env");
+  const envContent = `COLLECTION=${collectionName}`;
+  fs.writeFileSync(envPath, envContent, "utf8");
+  console.log("Variable updated in .env file");
 
   try {
     const schema = await readSchemaFromFile(schemaFilePath);
