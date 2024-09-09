@@ -1,30 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import DynamicForm from "./DynamicForm"; // Reuse DynamicForm component
+import FieldGroup from "./FieldGroup";
+import "./index.css"; // Import the CSS file
 
 const Update = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(null); // Hold formData in Update
+  const [formData, setFormData] = useState({});
+  const [schema, setSchema] = useState({});
 
   useEffect(() => {
+    const fetchSchema = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/schema");
+        const schemaData = await response.json();
+        setSchema(schemaData);
+      } catch (error) {
+        console.error("Error fetching schema:", error);
+      }
+    };
+
+    fetchSchema();
+
     if (location.state && location.state.item) {
-      setFormData(location.state.item); // Initialize formData with the item to update
+      setFormData(location.state.item);
     }
   }, [location]);
 
-  const handleUpdateSubmit = async (updatedFormData) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFieldGroupChange = (name, values) => {
+    setFormData({ ...formData, [name]: values });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const response = await fetch(
         `http://localhost:5000/api/userCollection/${
-          updatedFormData._id || updatedFormData.id
+          formData._id || formData.id
         }`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedFormData),
+          body: JSON.stringify(formData),
         }
       );
 
@@ -33,7 +57,7 @@ const Update = () => {
       }
 
       alert("Item successfully updated!");
-      navigate("/read"); // Navigate to the listing page after successful update
+      navigate("/read");
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to update item");
@@ -41,15 +65,30 @@ const Update = () => {
   };
 
   return (
-    <div>
+    <div className="form-container">
       <h2>Update Item</h2>
-      {/* Only render the form once formData is available */}
-      {formData && (
-        <DynamicForm
-          initialData={formData} // Pass existing data to DynamicForm
-          onSubmit={handleUpdateSubmit} // Pass update handler to DynamicForm
-        />
-      )}
+      <form onSubmit={handleSubmit}>
+        {Object.keys(schema).map((key) => (
+          <div key={key}>
+            <label>{key}:</label>
+            {Array.isArray(schema[key]) ? (
+              <FieldGroup
+                value={formData[key] || []}
+                onChange={(values) => handleFieldGroupChange(key, values)}
+              />
+            ) : (
+              <input
+                type="text"
+                name={key}
+                value={formData[key] || ""}
+                onChange={handleChange}
+                required
+              />
+            )}
+          </div>
+        ))}
+        <button type="submit">Update</button>
+      </form>
     </div>
   );
 };
