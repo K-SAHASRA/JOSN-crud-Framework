@@ -112,7 +112,7 @@ app.delete('/api/userCollection/:id', async (req, res) => {
 });
 
 // Database connection
-mongoose.connect('mongodb://127.0.0.1:27017/json-crud-framework', {
+mongoose.connect('mongodb://localhost:27017/json-crud-framework', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
