@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const template = require("./crudTemplate");
+const template = require("./crudTemplate"); // Corrected filename
 
 // Function to read schema from a JSON file
 const readSchemaFromFile = (filePath) => {
@@ -38,15 +38,8 @@ const generateCRUD = (collectionName, schema) => {
     if (err) {
       console.error("Error writing file:", err);
     } else {
-      console.log(
-        `CRUD operations for collection '${collectionName}' generated successfully.`
-      );
-      console.log(
-        `Run 'node ${path.join(
-          collectionName,
-          `${collectionName}.js`
-        )}' to start the server.`
-      );
+      console.log(`CRUD operations for collection '${collectionName}' generated successfully.`);
+      console.log(`Run 'node ${path.join(collectionName, `${collectionName}.js`)}' to start the server.`);
     }
   });
 };
@@ -54,7 +47,7 @@ const generateCRUD = (collectionName, schema) => {
 // Main function to handle command-line arguments and generate CRUD
 const main = async () => {
   if (process.argv.length !== 3) {
-    console.error("Usage: node generate-crud.js <collectionName>");
+    console.error("Usage: node crudGen.js <collectionName>");
     process.exit(1);
   }
 

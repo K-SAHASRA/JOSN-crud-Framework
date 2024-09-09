@@ -1,4 +1,4 @@
-const template = (collectionName, schema) => `
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -29,7 +29,7 @@ app.get('/api/schema', (req, res) => {
 
 app.get('/api/items', async (req, res) => {
     try {
-        const items = await ${collectionName}.find(); // Use the dynamically defined model
+        const items = await userCollection.find(); // Use the dynamically defined model
         res.json(items);
     } catch (error) {
         res.status(500).send('Server error');
@@ -37,15 +37,24 @@ app.get('/api/items', async (req, res) => {
 });
 
 
-// Define the schema for ${collectionName}
-const ${collectionName}Schema = new mongoose.Schema(${JSON.stringify(schema, null, 2)});
-const ${collectionName} = mongoose.model('${collectionName}', ${collectionName}Schema);
+// Define the schema for userCollection
+const userCollectionSchema = new mongoose.Schema({
+  "id": "Number",
+  "name": "String",
+  "course": "String",
+  "hobbies": [
+    "String"
+  ],
+  "age": "String",
+  "department": "String"
+});
+const userCollection = mongoose.model('userCollection', userCollectionSchema);
 
 // CRUD operations
 // Create
-app.post('/api/${collectionName}', async (req, res) => {
+app.post('/api/userCollection', async (req, res) => {
     try {
-        const newItem = new ${collectionName}(req.body);
+        const newItem = new userCollection(req.body);
         await newItem.save();
         res.status(201).send(newItem);
     } catch (error) {
@@ -54,9 +63,9 @@ app.post('/api/${collectionName}', async (req, res) => {
 });
 
 // Read all
-app.get('/api/${collectionName}', async (req, res) => {
+app.get('/api/userCollection', async (req, res) => {
     try {
-        const items = await ${collectionName}.find();
+        const items = await userCollection.find();
         res.status(200).send(items);
     } catch (error) {
         res.status(400).send(error);
@@ -64,9 +73,9 @@ app.get('/api/${collectionName}', async (req, res) => {
 });
 
 // Read one
-app.get('/api/${collectionName}/:id', async (req, res) => {
+app.get('/api/userCollection/:id', async (req, res) => {
     try {
-        const item = await ${collectionName}.findById(req.params.id);
+        const item = await userCollection.findById(req.params.id);
         if (!item) {
             return res.status(404).send('Item not found');
         }
@@ -77,9 +86,9 @@ app.get('/api/${collectionName}/:id', async (req, res) => {
 });
 
 // Update
-app.put('/api/${collectionName}/:id', async (req, res) => {
+app.put('/api/userCollection/:id', async (req, res) => {
     try {
-        const item = await ${collectionName}.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const item = await userCollection.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!item) {
             return res.status(404).send('Item not found');
         }
@@ -90,9 +99,9 @@ app.put('/api/${collectionName}/:id', async (req, res) => {
 });
 
 // Delete
-app.delete('/api/${collectionName}/:id', async (req, res) => {
+app.delete('/api/userCollection/:id', async (req, res) => {
     try {
-        const item = await ${collectionName}.findByIdAndDelete(req.params.id);
+        const item = await userCollection.findByIdAndDelete(req.params.id);
         if (!item) {
             return res.status(404).send('Item not found');
         }
@@ -103,7 +112,7 @@ app.delete('/api/${collectionName}/:id', async (req, res) => {
 });
 
 // Database connection
-mongoose.connect('mongodb://localhost:27017/json-crud-framework', {
+mongoose.connect('mongodb://127.0.0.1:27017/json-crud-framework', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -112,8 +121,5 @@ mongoose.connection.on('error', console.error.bind(console, 'connection error:')
 
 // Start the server
 app.listen(port, () => {
-    console.log(\`Server is running on http://localhost:\${port}\`);
+    console.log(`Server is running on http://localhost:${port}`);
 });
-`;
-
-module.exports = template;

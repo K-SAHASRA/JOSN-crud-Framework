@@ -1,0 +1,10 @@
+{
+  "id": "Number",
+  "name": "String",
+  "course": "String",
+  "hobbies": [
+    "String"
+  ],
+  "age": "String",
+  "department": "String"
+}
