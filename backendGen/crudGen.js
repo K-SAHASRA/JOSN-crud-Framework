@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const template = require("./crudTemplate");
+const template = require("./crudTemplate"); // Corrected filename
+
+// TODO : reading schema causes error
 
 // Function to read schema from a JSON file
 const readSchemaFromFile = (filePath) => {
@@ -23,7 +25,7 @@ const readSchemaFromFile = (filePath) => {
 // Function to generate CRUD code
 const generateCRUD = (collectionName, schema) => {
   // Create the folder named after collectionName
-  const collectionDir = path.join(__dirname, collectionName);
+  const collectionDir = path.join(__dirname, "..", collectionName);
 
   if (!fs.existsSync(collectionDir)) {
     fs.mkdirSync(collectionDir, { recursive: true });
@@ -43,6 +45,8 @@ const generateCRUD = (collectionName, schema) => {
       );
       console.log(
         `Run 'node ${path.join(
+          __dirname,
+          "..",
           collectionName,
           `${collectionName}.js`
         )}' to start the server.`
@@ -54,12 +58,17 @@ const generateCRUD = (collectionName, schema) => {
 // Main function to handle command-line arguments and generate CRUD
 const main = async () => {
   if (process.argv.length !== 3) {
-    console.error("Usage: node generate-crud.js <collectionName>");
+    console.error("Usage: node crudGen.js <collectionName>");
     process.exit(1);
   }
 
   const collectionName = process.argv[2];
   const schemaFilePath = path.join(__dirname, "schema.json"); // Always use 'schema.json'
+
+  const envPath = path.join(__dirname, "..", "crud-app", ".env");
+  const envContent = `REACT_APP_COLLECTION=${collectionName}`;
+  fs.writeFileSync(envPath, envContent, "utf8");
+  console.log("Variable updated in .env file");
 
   try {
     const schema = await readSchemaFromFile(schemaFilePath);
