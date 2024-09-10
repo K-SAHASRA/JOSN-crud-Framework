@@ -66,7 +66,7 @@ const main = async () => {
   const schemaFilePath = path.join(__dirname, "schema.json"); // Always use 'schema.json'
 
   const envPath = path.join(__dirname, "..", "crud-app", ".env");
-  const envContent = `COLLECTION=${collectionName}`;
+  const envContent = `REACT_APP_COLLECTION=${collectionName}`;
   fs.writeFileSync(envPath, envContent, "utf8");
   console.log("Variable updated in .env file");
 
