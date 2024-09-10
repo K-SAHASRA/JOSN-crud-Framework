@@ -40,7 +40,7 @@ const Update = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:5000/api/${process.env.COLLECTION}/${
+        `http://localhost:5000/api/${process.env.REACT_APP_COLLECTION}/${
           formData._id || formData.id
         }`,
         {
